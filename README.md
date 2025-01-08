@@ -123,18 +123,18 @@ We can see that some of the reviews are empty - at the moment we are not interes
 
     ![Output mapping](images/om1.png)
 
-    Enter `aggregated_reviews` as a Table name, keep other settings unchanged and click ADD OUTPUT
-    ![Output mapping 2](images/om2.png)
+    Enter `aggregated_reviews` as a Table name. Type `reviews-data-cleaning` to destination bucket name and click `Create new bucket "reviews-data-cleaning"`. Keep other settings unchanged and click `ADD OUTPUT`
+    ![Output mapping 2](images/om2a.png)
 
     Now, because we haven’t used an absolute path to our source table in the query (path that would include the bucket (schema) name) we need to use the Table Input Mapping, too. Click `New Table Input`, select `apify_reviews` as a source and click **ADD INPUT**.
     ![Input mapping](images/im.png)
 
 5. Run the transformation.
 
-    ![run Transformation](images/tr_run.png)
+    ![run Transformation](images/tr_runa.png)
 
     After the job is successfully executed you will see new table in the Storage explorer.
-    ![Transformation result](images/tr_result.png)
+    ![Transformation result](images/tr_resulta.png)
 
 ---
 
@@ -167,7 +167,7 @@ We can see that the “text” of the reviews is in varying language and format.
     ![AI 4](images/ai4.png)
 
     Now we will configure the component. Lets start with selecting the table we want to work with. Click `New Table Input` and select the `aggregated_reviews` table we created in the previous step. Click `ADD INPUT`.
-    ![AI 5](images/ai5.png)
+    ![AI 5](images/ai5a.png)
 
 
     Under `Configuration Parameters` click `LIST MODELS`. Keboola will use the previously entered API key to list all models available in the Hugging Face.
@@ -197,7 +197,7 @@ We can click `TEST PROMPT` to see what the model would return for first couple o
 If we are happy with the results we’ll enter `processed_reviews` as a `Destination Storage Table Name`, scroll up and click `SAVE` and then `RUN COMPONENT` to exectue the component job. 
 
 ![AI 8](images/ai8.png)
-![AI 9](images/ai9.png)
+![AI 9](images/ai9a.png)
 
 Keboola will use the selected input table and process each row with the entered prompt using the Hugging Face model. 
 
@@ -323,17 +323,13 @@ We can see the `result_value` is formatted as `Prompt text: {response json}`. We
 
     The script reads the input table as a CSV file. It also creates two new CSV files - one with parsed sentiment of the review and another one which aggregates counts of each keyword. We need to configure the `output mapping` to make sure the tables are loaded to `Storage` when the Transformation is executed.
 
-    Click `New Table Output`, enter `reviews_parsed.csv` as a **File name**. This is how we named it in our Transformation Code. 
+    Click `New Table Output`, enter `reviews_parsed.csv` as a **File name**. This is how we named it in our Transformation Code. Select our existing `reviews-data-cleaning` bucket as a Destination bucket. Click `ADD OUTPUT`.
     
-    ![Python 8](images/python8.png)
-
-    Click `ADD OUTPUT`
-
-    ![Python 9](images/python9.png)
+    ![Python 8](images/python8a.png)
 
     Repeat the same for **file name** `keyword_counts.csv`. The Table Output Mapping should now look like this:
 
-    ![Python 10](images/python10.png)
+    ![Python 10](images/python10a.png)
 
 7. Click **Run Transformation** to execute the job    
 
@@ -343,5 +339,99 @@ We can see the `result_value` is formatted as `Prompt text: {response json}`. We
 
     ![Python 12](images/python12.png)
 
-    ![Python 13](images/python13.png)
+    ![Python 13](images/python13b.png)
+
+
+## Step 5: Deploy Streamlit Data App
+To interact with the data we will use a Streamlit data app. We'll deploy and host that app in Keboola so that we can later share it with our colleagues, too.
+
+1. Navigate to `Components` > `Data Apps` and click `CREATE DATA APP`
+
+    ![App 1](images/app1.png)
+
+    ![App 2](images/app2.png)
+
+2. Enter `London Eye Reviews Analysis` as a Name and click `CREATE DATA APP`
+
+    ![App 3](images/app3.png)
+
+    The app configuration supports many features such as various Authentication options or custom secrets. 
+    You can read more about Keboola's data apps here https://help.keboola.com/components/data-apps
+
+3. Configure **Deployment**
+    We'll keep it simple now. We'll use an existing app's code that is already available in Github. Enter the following URL to a **Project URL** under Deployment and click `Load Branches`
+
+    URL: `https://github.com/kbcMichal/london_eye_app.git`
+
+    ![App 4](images/app4.png)    
+
+    Keboola automatically loads available branches from the Github repository. Select the `main` branch, `app.py` as a **main entry point** and click `SAVE`.
+
+    ![App 5](images/app5.png)    
+
+4. Deploy the app
+    Now we can click `DEPLOY DATA APP`. Keboola will spin a machine, install all the required tools and packages and deploy our Streamlit app. 
+
+    ![App 6](images/app6.png)
+
+    ![App 7](images/app7.png)
+
+    This executed a deployment job. After the job successfully finishes we'll see a new `OPEN DATA APP` button. 
+
+    ![App 8](images/app8.png)
+
+    Your app has a unique URL which is accessible to anyone at the moment because we haven't set any authentication. The app will be set to sleep after 15 minutes of inactivity but will re-deploy anytime someone accessess it again (the re-deploy process takes around one minute). Feel free to share you app to show your results!
+
+    ![App 9](images/app9.png)    
+
+## Bonus step: Automate it with a Flow!
+To automate the enitre pipeline we have just built we will configure a Flow.
+
+1. Navigate to **Flow**
+    ![Flow 1](images/flow1.png) 
+
+2. Click **CREATE FLOW**
+    ![Flow 2](images/flow2.png)  
+
+3. Enter `[build] Extract, enrich, deploy app` as a name and click **CREATE FLOW**
+    ![Flow 3](images/flow3.png)  
+
+4. Click `Select first step`
+    ![Flow 4](images/flow4.png)  
+
+5. First, we'll be executing the extraction of fresh data from our data source. Select the `MySQL` component.
+    ![Flow 5](images/flow5.png)  
+
+6. Then select the configuration we created before.
+    ![Flow 6](images/flow6.png)  
+    ![Flow 7](images/flow7.png)  
+
+7. Click the PLUS icon to add another task to our Flow    
+    ![Flow 8](images/flow8.png)  
+
+8. Another step is data transformation. Click `Transformations` and select `SQL Transformation`.
+    ![Flow 9](images/flow9.png)  
+
+9. Select the SQL transformation we created.
+
+    ![Flow 10](images/flow10.png)  
+
+    ![Flow 11](images/flow11.png)  
+
+10. Continue adding other steps to build a Flow looking like this:
+
+    ![Flow 12](images/flow12.png)  
+
+11. Click **SAVE**
+    
+    ![Flow 13](images/flow13.png)  
+
+12. To have this Flow executed automaticaly we will assign it a **Schedule**. Click `Schedules` and then `CREATE SCHEDULE`     
+    
+    ![Flow 14](images/flow14.png) 
+
+13. Configure the schedule to execute daily at 8am UTC and click `SET UP SCHEDULE`
+    ![Flow 15](images/flow15.png) 
+
+
 
