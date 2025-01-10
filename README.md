@@ -51,9 +51,9 @@ This guide will walk you through the creation of a data pipeline to:
 
 2. Click **CREATE TABLE** 
     ![Create table](images/create_table.png)
-    - Keboola creates so called `configuration row` for each selected table. Click the row to enter the row configuration details.
+    - Keboola automatically creates a `configuration row` for each selected table. Click the row to enter the row configuration details.
         ![Configuration row](images/config_row.png)
-    - In the detailed settings we can configure incremental fetching as well as loading to Keboola, primary keys or even use the “advanced mode” to enter a SQL statement instead. That statement would be executed by Keboola in the source MySQL database and the result would be processed and stored in Keboola. We’ll keep the settings default, as it is. 
+    - In the detailed settings we can configure incremental fetching as well as loading to Keboola, primary keys or even use the “advanced mode” to enter a SQL statement instead. This statement will be executed by Keboola in the source MySQL database, and the result will then be processed and stored in Keboola. We’ll keep the settings default, as it is. 
 
 3. Click **RUN** to execute the connector job to fetch the data into Keboola's backend (Snowflake).
     ![Run extractor](images/run_extractor.png)
@@ -141,7 +141,22 @@ We can see that some of the reviews are empty - at the moment we are not interes
 ## Step 3: AI Enrichment
 We can see that the “text” of the reviews is in varying language and format. We’ll use Keboola’s Generative AI component to translate the text and process a sentiment analysis and keyword extraction. 
 
-### Set Up the Generative AI Component
+### Step 3 Alternative Route
+> The Generative AI Token (provided below) won't be active if you're following this tutorial outside of the Snowflake Build event. In such case - or simply to speed up the process - navigate to **Data Catalogue** and link data with already processed datasets.
+
+![Catalog1](images/catalog1.png)
+
+Locate the shared bucket and click `USE THIS`.
+
+![Catalog2](images/catalog2.png)
+
+Click `LINK`.
+
+![Catalog3](images/catalog3.png)
+
+Now the shared bucket will appear in the storage. **You can continue to Step 4**.
+
+### Standard route - Set Up the Generative AI Component
 1. Navigate to `Components` > `Components` > `ADD COMPONENT` and search for `Generative AI` and click `ADD COMPONENT` .
     ![Add component](images/comps_add.png)
 2. Enter `[build] Sentiment analysis, Keyword extraction` as a name and click `CREATE CONFIGURATION`
@@ -188,7 +203,7 @@ Text: """
 """
 ```
 
-Notice the `[[text]]` placeholder - it tells Keboola that it needs to replace this placeholder with a value of `text` column from the input table. 
+Notice the `[[text]]` placeholder—this instructs Keboola to replace the placeholder with the value of the `text` column from the input table. 
 
 We can click `TEST PROMPT` to see what the model would return for first couple of rows from our Input Table.
 
@@ -321,7 +336,7 @@ We can see the `result_value` is formatted as `Prompt text: {response json}`. We
         
 6. Configure **OUTPUT MAPPING**
 
-    The script reads the input table as a CSV file. It also creates two new CSV files - one with parsed sentiment of the review and another one which aggregates counts of each keyword. We need to configure the `output mapping` to make sure the tables are loaded to `Storage` when the Transformation is executed.
+    The script reads the input table as a CSV file. It also creates two new CSV files - one with parsed sentiment of the review and another that aggregates the counts of each keyword. We need to configure the `output mapping` to make sure the tables are loaded to `Storage` when the Transformation is executed.
 
     Click `New Table Output`, enter `reviews_parsed.csv` as a **File name**. This is how we named it in our Transformation Code. Select our existing `reviews-data-cleaning` bucket as a Destination bucket. Click `ADD OUTPUT`.
     
@@ -380,7 +395,7 @@ To interact with the data we will use a Streamlit data app. We'll deploy and hos
 
     ![App 8](images/app8.png)
 
-    Your app has a unique URL which is accessible to anyone at the moment because we haven't set any authentication. The app will be set to sleep after 15 minutes of inactivity but will re-deploy anytime someone accessess it again (the re-deploy process takes around one minute). Feel free to share you app to show your results!
+    Your app has a unique URL which is accessible to anyone at the moment because we haven't set any authentication. The app will be set to sleep after 15 minutes of inactivity but will re-deploy anytime someone accessess it again (the re-deploy process takes around one minute). Feel free to share your app to showcase your results!
 
     ![App 9](images/app9.png)    
 
@@ -426,7 +441,7 @@ To automate the enitre pipeline we have just built we will configure a Flow.
     
     ![Flow 13](images/flow13.png)  
 
-12. To have this Flow executed automaticaly we will assign it a **Schedule**. Click `Schedules` and then `CREATE SCHEDULE`     
+12. To execute this Flow automatically, we will assign it a **Schedule**. Click `Schedules` and then `CREATE SCHEDULE`     
     
     ![Flow 14](images/flow14.png) 
 
