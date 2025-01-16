@@ -3,8 +3,7 @@
 ## Getting Started
 
 ### Access Your Keboola Project
-1. Scan the QR code provided and follow the instructions to join your Keboola project environment.
-2. Ensure you have received and accepted the email invitation to access the project, which will be named **Snowflake Build #X**.
+By following the instructions shared at Snowflake Build class you should receive the email invitation to access your project, which will be named **Snowflake Build #X**.
 
 ---
 
@@ -13,9 +12,10 @@
 This guide will walk you through the creation of a data pipeline to:
 1. Collect Google Reviews of the London Eye stored in a MySQL database.
 2. Process these reviews using Snowflake SQL transformations.
-3. Enrich the data using a HuggingFace model.
+3. Enrich the data using a HuggingFace LLM model.
 4. Parse the LLM response using Python Transformation.
 5. Deploy a Streamlit data app to visualize the data.
+6. Automate everything.
 
 ---
 
@@ -46,6 +46,7 @@ This guide will walk you through the creation of a data pipeline to:
 
 ### Fetch the Table
 1. Click **Select tables to copy** and select the `apify_reviews` table.
+    - The table is named apify_reviews because the data was originally scraped from Google Maps using the Apify service. However, to simplify this exercise, the scraped data was preloaded into a MySQL database instead of running the scraper at scale.
 
     ![Select table](images/select_tables.png)
 
@@ -67,18 +68,20 @@ This guide will walk you through the creation of a data pipeline to:
     Click the job to enter its detail.
 
 5. Navigate to **Storage** from the main menu.
-    - The Storage UI is an explorer of the objects that are stored in the Snowflaked backend behind Keboola. 
+    - The Storage UI is an explorer of the objects that are stored in the Snowflake backend behind Keboola. 
     - After the executed Job finishes successfully we'll see a new data bucket (Snowflake Schema) there.
         - Expand the bucket  to see the tables. Then click the Table to view its details:
         ![Storage](images/storage.png)
         ![Storage table](images/storage_table.png)
-    - At the `Overview` tab we can see all the table's metadata. At the `Data Sample` we can study and filter the extracted data.
-        ![Table detail](images/table_detail.png)
-
+    - At the `Overview` tab we can see all the table's metadata. 
+        ![Table detail](images/table_detail1.png)
+    
+    - At the `Data Sample` we can study and filter the extracted data. We can see that some of the reviews are empty - at the moment we are not interested in those. Let’s create a SQL transformation to process and clean the extracted data.
+        ![Table detail](images/table_detail2.png)
 ---
 
 ## Step 2: Data Transformation
-We can see that some of the reviews are empty - at the moment we are not interested in those. Let’s create a SQL transformation to process and clean the extracted data.
+
 
 ### Create a Transformation
 1. Navigate to `Transformations` > `CREATE TRANSFORMATION`.
@@ -448,5 +451,8 @@ To automate the enitre pipeline we have just built we will configure a Flow.
 13. Configure the schedule to execute daily at 8am UTC and click `SET UP SCHEDULE`
     ![Flow 15](images/flow15.png) 
 
+---
+
+Congratulations! You have successfully built and automated your data pipeline on Keboola.
 
 
