@@ -35,7 +35,7 @@ This guide will walk you through the creation of a data pipeline to:
    - Hostname: `34.46.66.107`
    - Port: `3306`
    - Username: `build_read`
-   - Password: `tbd`
+   - Password: https://share.1password.com/s#YNlsZtKpHKh7ObCsPOLPDfAicyIuYFtOcN6JjRH0Wi8
    - Database: `build`
    - Transaction Isolation Level: Default
 
@@ -171,7 +171,7 @@ Now the shared bucket will appear in the storage. **You can continue to Step 4**
     
     Enter the following and click `SAVE`
    - AI Service Provider: Hugging Face
-   - API Key: `tbd`
+   - API Key: https://share.1password.com/s#bpJveYemf8cIBu2-huue7DaxVjBF4f3dkVAjDeXlg44
 
     ![AI 2](images/ai2.png)
 
