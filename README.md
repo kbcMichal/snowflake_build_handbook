@@ -1,4 +1,5 @@
 # Keboola - Snowflake Build hands-on lab - User Guide
+[Youtube Video Walkthrough](https://www.youtube.com/watch?v=JKD8BhJ7KJg)
 
 ## Getting Started
 
